@@ -29,38 +29,44 @@
 	.arm
 matadd:
     push {r4, r5, r6, r7, lr} // r4=i, r5=j, r6,r7=temp
-    mov r4, #-1
+    mov r4, #0
 iloop:
-    add r4, r4, #1
-    cmp r4, r3 // Compare i with height-1
+    mov r7, #4
+    mul r7, r3, r7
+    cmp r7, r4 // Compare i with height
     beq return
-    mov r5, #-1
+    mov r5, #0
 jloop:
-    ldr r6, [sp, #24]
-    add r5, r5, #1
-    cmp r5, r6 // Compare j with width
-    beq iloop
-    
+    ldr r6, [sp, #20]
+    mov r7, #4
+    mul r7, r6, r7
+    cmp r7, r5 // Compare j with width
+    beq inci
+
     // Load A[i][j] into r6
-    add r6, r2, r5
+    add r6, r4, r1
     ldr r6, [r6]
-    add r6, r6, r4
+    add r6, r6, r5
     ldr r6, [r6]
 
     // Load B[i][j] into r7
-    add r7, r3, r5
+    add r7, r4, r2
     ldr r7, [r7]
-    add r7, r7, r4
+    add r7, r7, r5
     ldr r7, [r7]
 
     add r6, r6, r7 // Put sum in r6
 
     // Store address for C[i][j] in r7
-    add r7, r2, r5
-    ldr r7, [r6]
-    add r7, r6, r4
+    add r7, r4, r0
+    ldr r7, [r7]
+    add r7, r7, r5
     
     str r6, [r7] // Store sum into C
+    add r5, r5, #4
     b jloop
+inci:
+    add r4, r4, #4
+    b iloop
 return:
     pop {r4, r5, r6, r7, pc} 
